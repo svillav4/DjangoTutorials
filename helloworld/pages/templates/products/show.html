@@ -13,13 +13,14 @@
             <div class="card-body"> 
                 <h5 class="card-title">{{ product.name }}</h5>
                 
-                {% if product.price > 100 %}
-                    <p class="card-text text-danger">{{ product.price }} USD</p> 
+                {% if product.price > 2000 %}
+                    <p class="card-text" style="color: red;">{{ product.price }} USD</p> 
                 {% else %}
                     <p class="card-text">{{ product.price }} USD</p> 
                 {% endif %}
-                
-                <p class="card-text">{{ product.description }}</p>
+                {% for comment in product.comment_set.all %} 
+                    - {{ comment.description }}<br /> 
+                {% endfor %} 
             </div> 
         </div> 
     </div> 
