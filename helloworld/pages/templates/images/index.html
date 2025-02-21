@@ -1,0 +1,27 @@
+{% extends 'pages/base.html' %} 
+{% block title %} Image Storage - DI {% endblock %} 
+
+{% block content %} 
+ 
+<div class="container"> 
+  <div class="row justify-content-center"> 
+    <div class="col-md-8"> 
+      <div class="card"> 
+        <div class="card-header">Upload image</div> 
+        <div class="card-body"> 
+        <form action="{% url 'image_save' %}" method="post" enctype="multipart/form-data"> 
+        {% csrf_token %} 
+          <div class="form-group"> 
+            <label>Image:</label> 
+            <input type="file" name="profile_image" /> 
+          </div> 
+          <button type="submit" class="btn btn-primary">Submit</button> 
+        </form> 
+ 
+        <img src="{{ image_url }}" /> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+{% endblock %}

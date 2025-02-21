@@ -5,7 +5,7 @@ from django.views import View
 from django.urls import reverse
 from django import forms
 from .models import Product
-
+from .utils import ImageLocalStorage
 
 class HomePageView(TemplateView):
     template_name = 'pages/home.html'
@@ -37,17 +37,6 @@ class ContactPageView(TemplateView):
             "phoneNumber": "+57 3174535678",
         })
         return context
-
-
-'''class Product:
-    products = [
-        {"id":"1", "name":"TV", "description":"Best TV", "price":500},
-        {"id":"2", "name":"iPhone", "description":"Best iPhone", "price":1000},
-        {"id":"3", "name":"Chromecast", "description":"Best Chromecast", "price":100},
-        {"id":"4", "name":"Glasses", "description":"Best Glasses", "price":20},
-    ]
-'''
-
 
 class ProductIndexView(View):
     template_name = 'products/index.html'
@@ -175,3 +164,29 @@ class CartRemoveAllView(View):
             del request.session['cart_product_data'] 
  
         return redirect('cart_index')
+
+def ImageViewFactory(image_storage): 
+    class ImageView(View):
+        template_name = 'images/index.html' 
+
+        def get(self, request): 
+            image_url = request.session.get('image_url', '') 
+            return render(request, self.template_name, {'image_url': image_url}) 
+
+        def post(self, request): 
+            image_url = image_storage.store(request) 
+            request.session['image_url'] = image_url 
+            return redirect('image_index') 
+    return ImageView
+
+class ImageViewNoDI(View): 
+    template_name = 'images/index.html' 
+    def get(self, request): 
+        image_url = request.session.get('image_url', '') 
+        return render(request, self.template_name, {'image_url': image_url})
+
+    def post(self, request): 
+        image_storage = ImageLocalStorage() 
+        image_url = image_storage.store(request) 
+        request.session['image_url'] = image_url 
+        return redirect('image_index')
