@@ -1,10 +1,10 @@
-import json
 from rest_framework import generics, permissions
 from .serializers import ToDoSerializer, ToDoToggleCompleteSerializer
 from todo.models import ToDo
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
@@ -44,7 +44,7 @@ class ToDoToggleComplete(generics.UpdateAPIView):
 def signup(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)  # Updated JSON parsing
+            data = JSONParser().parse(request)
             user = User.objects.create_user(
                 username=data['username'],
                 password=data['password']
@@ -58,7 +58,7 @@ def signup(request):
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
-        data = json.loads(request.body)  # Updated JSON parsing
+        data = JSONParser().parse(request)  
         user = authenticate(
             request,
             username=data['username'],
@@ -66,9 +66,9 @@ def login(request):
         )
         if user is None:
             return JsonResponse({'error': 'Unable to login. Check username and password'}, status=400)
-        else:
-            try:
-                token = Token.objects.get(user=user)
-            except Token.DoesNotExist:  # if token not in db, create a new one
-                token = Token.objects.create(user=user)
-            return JsonResponse({'token': str(token)}, status=201)
+        try:
+            token = Token.objects.get(user=user)
+        except Token.DoesNotExist:  # if token not in db, create a new one
+            token = Token.objects.create(user=user)
+        return JsonResponse({'token': str(token)}, status=200)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
