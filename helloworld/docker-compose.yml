@@ -6,13 +6,11 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_DATABASE='djangobd'
-      - MYSQL_USER='svillav4'
-      - MYSQL_PASSWORD='1234'
-      - MYSQL_HOST='34.60.67.209'
-      - MYSQL_ROOT_PASSWORD='1234'
+      - MYSQL_DATABASE=djangobd
+      - MYSQL_USER=svillav4
+      - MYSQL_PASSWORD=1234
+      - MYSQL_ROOT_PASSWORD=1234
     volumes:
-      - /tmp/code/mysqld:/var/run/mysqld
       - ./db:/var/lib/mysql
   web:
     build: .
@@ -21,6 +19,5 @@ services:
       - "8000:8000"
     volumes:
       - .:/code
-      - /tmp/code/mysqld:/run/mysqld
     depends_on:
       - db
